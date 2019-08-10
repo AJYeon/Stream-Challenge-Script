@@ -1,0 +1,1 @@
+#NOTE: Please put this text file inside the Files directory of the Twitch folder for Chatbot
