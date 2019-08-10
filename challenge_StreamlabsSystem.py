@@ -2,7 +2,7 @@
 #   Import Libraries
 #---------------------------
 import os
-#import json 
+sys.path.append(os.path.join(os.path.dirname(__file__), "lib"))
 import Fighter
 
 
@@ -10,7 +10,7 @@ import Fighter
 ScriptName = "Challenge"
 Website = "https://streamlabs.com"
 Description = "Fire Emblem Combat simulator game"
-Creator = "StreamMin" # or for a script you write, your name here
+Creator = "StreamMin"
 Version = "1.0.0"    
 
 # global data used by the script
@@ -22,8 +22,6 @@ global userLineNumber
 global winLossRecord
 global scriptdirectory
 global records
-
-fightDone = False
 
 def changeFileDirectory():
     os.chdir("..")
