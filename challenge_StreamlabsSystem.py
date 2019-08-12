@@ -3,7 +3,8 @@
 #---------------------------
 import os
 import sys
-sys.path.append(os.path.join(os.path.dirname(__file__), "lib"))
+libFolder = os.path.join(os.path.dirname(__file__), "lib")
+sys.path.append(libFolder)
 import Fighter
 
 
@@ -15,25 +16,25 @@ Creator = "StreamMin"
 Version = "1.0.0"    
 
 # global data used by the script
-global sigrdmin
-global challenger
-global userWeapon
-global sigrdminWeapon
-global userLineNumber
-global winLossRecord
-global scriptdirectory
-global records
+sigrdmin = None
+challenger = None
+userWeapon = ""
+sigrdminWeapon = ""
+userLineNumber = 0
+winLossRecord = ""
+scriptDirectory = ""
+recordFile = ""
+records = []
 
-'''
+
 def changeFileDirectory():
-    os.chdir("..")
-    os.chdir("..")
+
     rootDirectory = os.getcwd()
     twitchDirectory = os.path.join(rootDirectory,"Twitch")
     fileDirectory = os.path.join(twitchDirectory,"Files")
     print(fileDirectory)
     os.chdir(fileDirectory)
-'''
+
 
 def writeTextFile(filename,content):
     with open(filename,"w") as f:
@@ -43,11 +44,13 @@ def writeTextFile(filename,content):
 
 # called when your script starts up
 def Init():
+    global recordFile,records
     """
     scriptDirectory = os.getcwd()
     changeFileDirectory()
     """
-    with open("challenge_record.txt","r") as f:
+    recordFile = os.path.join(libFolder,"challenge_record.txt")
+    with open(recordFile,"r") as f:
         records = f.readlines()
     records = [line.rstrip("\n") for line in records]
     f.close()
@@ -58,6 +61,7 @@ def Init():
 # called whenever the chatbot has data - chat messages, whispers, etc. - that
 # your script might care about
 def Execute(data):
+    global sigrdmin, challenger, userWeapon, sigrdminWeapon, userLineNumber, winLossRecord, scriptDirectory, recordFile, records
     if data.IsChatMessage() and data.GetParam(0).lower() == '!challenge':
         try:
             userFound = False
@@ -123,7 +127,7 @@ def Execute(data):
                     if challenger.returnHP() != 0:
                         records[usrLineNumber] = "name=" + data.User + " weapon1=" + userWeapon + " weapon2=" + sigurdWeapon + " HP1=" + challenger.returnHP() + " HP2=" + sigrdmin.returnHP() + " fight=True record=" + winLossRecord + "\n"
                         #changeFileDirectory()
-                        writeTextFile("challenge_record.txt",records)
+                        writeTextFile(recordFile,records)
                         #os.chdir(scriptDirectory)
                         Parent.SendStreamMessage(sigrdmin.pickSurvive() + " | CURRENT SITUATION:" + data.User + "'s HP: " + challenger.returnHP() + " " + sigrdmin.returnName() + "'s HP: " + sigrdmin.returnHP() + " |")
                     else:
@@ -131,7 +135,7 @@ def Execute(data):
                         updatedRecord = winLossRecord[:winLossRecord.find("-") +1] + str(int(sigrdminScore) + 1)
                         records[usrLineNumber] = "name=" + data.User + " weapon1= weapon2= HP1= HP2= fight=False record=" + updatedRecord + "\n"
                         #changeFileDirectory()
-                        writeTextFile("challenge_record.txt",records)
+                        writeTextFile(recordFile,records)
                         #os.chdir(scriptDirectory)
                         Parent.SendStreamMessage(sigrdmin.pickVictory() + " | CURRENT RECORD:" + data.User + " " + updatedRecord + " " + sigrdmin.returnName() + " |")   
                 else:
@@ -139,7 +143,7 @@ def Execute(data):
                     updatedRecord = str(int(usrScore) + 1) + winLossRecord[winLossRecord.find("-"):]
                     records[usrLineNumber] = "name=" + data.User + " weapon1= weapon2= HP1= HP2= fight=False record=" + updatedRecord + "\n"
                     #changeFileDirectory()
-                    writeTextFile("challenge_record.txt",records)
+                    writeTextFile(recordFile,records)
                     #os.chdir(scriptDirectory)
                     Parent.SendStreamMessage(sigrdmin.pickDefeat() + " | CURRENT RECORD: " + data.User + " " + updatedRecord + " " + sigrdmin.returnName() + " |")
             elif initiativeFighter == sigrdmin.returnName():
@@ -151,7 +155,7 @@ def Execute(data):
                     if sigrdmin.returnHP() != 0:
                         records[usrLineNumber] = "name=" + data.User + " weapon1=" + userWeapon + " weapon2=" + sigurdWeapon + " HP1=" + challenger.returnHP() + " HP2=" + sigrdmin.returnHP() + " fight=True record=" + winLossRecord + "\n"
                         #changeFileDirectory()
-                        writeTextFile("challenge_record.txt",records)
+                        writeTextFile(recordFile,records)
                         #os.chdir(scriptDirectory)
                         Parent.SendStreamMessage(sigrdmin.pickSurvive() + " | CURRENT SITUATION:" + data.User + "'s HP: " + challenger.returnHP() + " " + sigrdmin.returnName() + "'s HP: " + sigrdmin.returnHP() + " |")
                     else:
@@ -159,7 +163,7 @@ def Execute(data):
                         updatedRecord = str(int(usrScore) + 1) + winLossRecord[winLossRecord.find("-"):]
                         records[usrLineNumber] = "name=" + data.User + " weapon1= weapon2= HP1= HP2= fight=False record=" + updatedRecord + "\n"
                         #changeFileDirectory()
-                        writeTextFile("challenge_record.txt",records)
+                        writeTextFile(recordFile,records)
                         #os.chdir(scriptDirectory)
                         Parent.SendStreamMessage(sigrdmin.pickDefeat() + " | CURRENT RECORD: " + data.User + " " + updatedRecord + " " + sigrdmin.returnName() + " |")
                 else:
@@ -167,7 +171,7 @@ def Execute(data):
                     updatedRecord = winLossRecord[:winLossRecord.find("-") +1] + str(int(sigrdminScore) + 1)
                     records[usrLineNumber] = "name=" + data.User + " weapon1= weapon2= HP1= HP2= fight=False record=" + updatedRecord + "\n"
                     #changeFileDirectory()
-                    writeTextFile("challenge_record.txt",records)
+                    writeTextFile(recordFile,records)
                     #os.chdir(scriptDirectory)
                     Parent.SendStreamMessage(sigrdmin.pickVictory() + " | CURRENT RECORD:" + data.User + " " + updatedRecord + " " + sigrdmin.returnName() + " |") 
         except:

@@ -1,1 +1,1 @@
-#NOTE: Please put this text file inside the Files directory of the Twitch folder for Chatbot
+name=StreamMin weapon1= weapon2= HP1= HP2= fight=False record=0-0
