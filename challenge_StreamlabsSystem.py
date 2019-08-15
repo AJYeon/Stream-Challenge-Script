@@ -3,7 +3,7 @@
 #---------------------------
 import os
 import sys
-libFolder = os.path.join(os.path.dirname(__file__), "lib")
+libFolder = os.path.join(os.path.dirname(__file__), "lib") # works differently from what we think it does?
 sys.path.append(libFolder)
 import Fighter
 
@@ -18,13 +18,13 @@ Version = "1.0.0"
 # global data used by the script
 sigrdmin = None
 challenger = None
-userWeapon = ""
-sigrdminWeapon = ""
 userLineNumber = 0
 winLossRecord = ""
 scriptDirectory = ""
-recordFile = ""
+recordFile = "challenge_record.txt"
+configFile = "config.json"
 records = []
+settings = {}
 
 
 def changeFileDirectory():
@@ -40,44 +40,39 @@ def writeTextFile(filename,content):
     with open(filename,"w") as f:
         f.writelines(content)
     f.close()
-    
+
+def readTextFile(filename):
+    with open(filename,"r") as f:
+        data = f.readlines()
+    data = [line.rstrip("\n") for line in records]
+    f.close()
+    return data
 
 # called when your script starts up
 def Init():
-    global recordFile,records
-    """
-    scriptDirectory = os.getcwd()
-    changeFileDirectory()
-    """
-    recordFile = os.path.join(libFolder,"challenge_record.txt")
-    with open(recordFile,"r") as f:
-        records = f.readlines()
-    records = [line.rstrip("\n") for line in records]
-    f.close()
-    #os.chdir(scriptDirectory)
-       
     
 
 # called whenever the chatbot has data - chat messages, whispers, etc. - that
 # your script might care about
 def Execute(data):
-    global sigrdmin, challenger, userWeapon, sigrdminWeapon, userLineNumber, winLossRecord, scriptDirectory, recordFile, records
-    if data.IsChatMessage() and data.GetParam(0).lower() == '!challenge':
+    global sigrdmin, challenger, userLineNumber, winLossRecord, scriptDirectory, recordFile, records
+    if data.IsChatMessage() and data.GetParam(0).lower() == '!challenge': # Add Parent.IsLive() after finished testing
         try:
             userFound = False
             userLineNumber = 0
-            for user in records:
-                userLineNumber = user
-                if records[user][records[user].find("name") + 5:records[user].find("weapon1")-1] == data.User:
-                    fightState = records[user][records[user].find("fight") + 6:records[user].find("record")-1]
+            #recordPath = os.path.join(libFolder,"challenge_record.txt")
+            records = readTextFile(recordFile)
+            for line in records:
+                if records[line][records[line].find("name") + 5:records[line].find("weapon1")-1] == data.User:
+                    fightState = records[line][records[line].find("fight") + 6:records[line].find("record")-1]
                     if fightState:
-                        userWeapon = records[user][records[user].find("weapon1") + 8:records[user].find("weapon2")-1]
-                        userHitPoints = records[user][records[user].find("HP1") + 4:records[user].find("HP2")-1]
-                        winLossRecord = records[user][records[user].find("record") + 7:len(records[user])]
+                        userWeapon = records[line][records[line].find("weapon1") + 8:records[line].find("weapon2")-1]
+                        userHitPoints = records[line][records[line].find("HP1") + 4:records[line].find("HP2")-1]
+                        winLossRecord = records[line][records[line].find("record") + 7:len(records[line])]
                         challenger = Fighter.fighter(data.User,weapon = userWeapon, hitPoints = userHitPoints)
                         challenger.setWeaponStats()
-                        sigrdminWeapon = records[user][records[user].find("weapon2") + 8:records[user].find("HP1")-1]
-                        sigrdminHitPoints = records[user][records[user].find("HP2") + 4:records[user].find("fight")-1]
+                        sigrdminWeapon = records[line][records[line].find("weapon2") + 8:records[line].find("HP1")-1]
+                        sigrdminHitPoints = records[line][records[line].find("HP2") + 4:records[line].find("fight")-1]
                         sigrdmin = Fighter.fighter(data.User,weapon = sigrdminWeapon, hitPoints = sigrdminHitPoints)
                         sigrdmin.setWeaponStats()
                         userFound = True
@@ -91,6 +86,7 @@ def Execute(data):
                         sigrdmin.setWeaponStats()
                         userFound = True
                         break
+                userLineNumber += 1
             if not userFound:
                 userLineNumber += 1
                 challenger = Fighter.fighter(data.User)
@@ -173,7 +169,7 @@ def Execute(data):
                     #changeFileDirectory()
                     writeTextFile(recordFile,records)
                     #os.chdir(scriptDirectory)
-                    Parent.SendStreamMessage(sigrdmin.pickVictory() + " | CURRENT RECORD:" + data.User + " " + updatedRecord + " " + sigrdmin.returnName() + " |") 
+                    Parent.SendStreamMessage(sigrdmin.pickVictory() + " | CURRENT RECORD:" + data.User + " " + updatedRecord + " " + sigrdmin.returnName() + " |")
         except:
             pass
             
