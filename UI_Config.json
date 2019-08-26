@@ -1,0 +1,55 @@
+{
+    "output_file": "config.json",
+
+    "liveOnly": {
+        "type": "checkbox",
+        "value": true,
+        "label": "Live Only Mode",
+        "tooltip": "True if you want it to only run when you are live",
+        "group" : "General"
+    },
+    "permission": {
+        "type": "dropdown",
+        "value": "Everyone",
+        "items": ["Everyone","Regular","Subscriber","Moderator","Editor"],
+        "label": "Permission level",
+        "tooltip": "Set the permission level for participating",
+        "group" : "General"
+    },
+    "minReward": {
+        "type": "numberbox",
+        "value": 1,
+        "label": "Min reward",
+        "tooltip": "Minimum ammount the user wins for writing the word first",
+        "group" : "Currency"
+    },
+    "maxReward": {
+        "type": "numberbox",
+        "value": 10,
+        "label": "Max reward",
+        "tooltip": "Maximum ammount the user wins for writing the word first",
+        "group" : "Currency"
+    },
+    "cooldown": {
+        "type": "numberbox",
+        "value": 60,
+        "label": "Command cooldown in seconds",
+        "tooltip": "Amount in seconds the command '!challenge' is put on cooldown for",
+        "group" : "General"
+    },
+    "maxChallenger": {
+        "type": "numberbox",
+        "value": 1,
+        "label": "Maximum SIGRDMIN challengers",
+        "tooltip": "Maximum amount of challengers that can battle SIGRDMIN at a time",
+        "group" : "General"
+    },
+    "OpenRecords": {
+        "type": "button",
+        "label": "Open Challenger Records",
+        "tooltip": "Opens 'challenge_record.txt' that contains information needed to run Challenge script",
+        "function": "openRecordsFile",
+        "wsevent": "",
+        "group" : "General"
+    }
+}
